@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import Darwin.C
+import libkern
+import os.log
 
-print("Hello, World!")
-
+os_log("%s ~ work: %s", Date().timeIntervalSince1970, "Hello World!")
