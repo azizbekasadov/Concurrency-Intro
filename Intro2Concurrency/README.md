@@ -73,3 +73,25 @@ Block operations run concurrently. If you need them to run serially, you'll need
 - GCD tends to be simpler to work with for simple tasks you just need to execute and forget. Operations provide much more functionality when you need to keep track of a job or maintain the ability to cancel it.
 
 - If you’re just working with methods or chunks of code that need to be executed, GCD is a fitting choice. If you’re working with objects that need to encapsulate data and functionality then you’re more likely to utilize Operations. Some developers even go to the extreme of saying that you should always use Operations because it’s built on top of GCD, and Apple’s guidance says to always use the highest level of abstraction provided.
+
+#Threads
+There are many advantages to splitting your app’s work into multiple threads:
+• Faster execution: By running tasks on threads, it’s possible for work to be done
+concurrently, which will allow it to finish faster than running everything serially.
+• Responsiveness: If you only perform user-visible work on the main UI thread, then users won’t notice that the app slows down or freezes up periodically due to work that could be performed on another thread.
+• Optimized resource consumption: Threads are highly optimized by the OS.
+
+When you create a queue, the OS will potentially create and assign one or more threads to the queue. If existing threads are available, they can be reused; if not, then the OS will create them as necessary.
+
+##Main queue
+When your app starts, a main dispatch queue is automatically created for you. It’s a serial queue that’s responsible for your UI. Because it’s used so often, Apple has made it available as a class variable, which you access via DispatchQueue.main. You never want to execute something synchronously against the main queue, unless it’s related to actual UI work. Otherwise, you’ll lock up your UI which could potentially degrade your app performance.
+
+If you recall from the previous chapter, there are two types of dispatch queues: serial or concurrent. The default initializer will create a serial queue wherein each task must complete before the next task is able to start.
+
+Concurrent queues are so common that Apple has provided six different global concurrent queues, depending on the Quality of service (QoS) the queue should have.
+
+If you just need a concurrent queue but don’t want to manage your own, you can use the global class method on DispatchQueue to get one of the pre-defined global queues:
+
+```
+    let queue = DispatchQueue.global(qos: .userInteractive)
+```
